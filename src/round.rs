@@ -44,7 +44,10 @@ impl Round {
                 };
                 let fives = (players.len() - 4 * fours) / 5;
                 let mut result_list = Vec::with_capacity(fours + fives);
-                for round in players[..fives * 5].chunks(5).chain(players[fives * 5..].chunks(4)) {
+                for round in players[..fives * 5]
+                    .chunks(5)
+                    .chain(players[fives * 5..].chunks(4))
+                {
                     result_list.push(Vec::from(round));
                 }
                 Ok(Round(result_list))
@@ -93,7 +96,10 @@ impl Round {
 
         global_indexes
     }
-    pub(crate) fn __global_index_to_tuple(&self, mut index: usize) -> Result<(usize, usize), RoundError> {
+    pub(crate) fn __global_index_to_tuple(
+        &self,
+        mut index: usize,
+    ) -> Result<(usize, usize), RoundError> {
         let mut table_index = 0;
         for table in self.iter() {
             if index >= table.len() {
@@ -112,12 +118,12 @@ impl Round {
         let _ = replace(&mut self[index], value);
     }
     pub(crate) fn get_player(&self, index: usize) -> i32 {
-        let (i,j) = self.__global_index_to_tuple(index).unwrap();
+        let (i, j) = self.__global_index_to_tuple(index).unwrap();
 
         self[i][j]
     }
     pub(crate) fn set_player(mut self, index: usize, value: i32) {
-        let (i,j) = self.__global_index_to_tuple(index).unwrap();
+        let (i, j) = self.__global_index_to_tuple(index).unwrap();
 
         let _ = replace(&mut self[i][j], value);
     }
@@ -139,7 +145,12 @@ mod test {
 
     #[test]
     fn test_round_from_19() {
-        let manually_constructed_round = Ok(Round(vec![vec![1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10], vec![11, 12, 13, 14, 15], vec![16, 17, 18, 19]]));
+        let manually_constructed_round = Ok(Round(vec![
+            vec![1, 2, 3, 4, 5],
+            vec![6, 7, 8, 9, 10],
+            vec![11, 12, 13, 14, 15],
+            vec![16, 17, 18, 19],
+        ]));
         let players: Vec<i32> = (1..=19).collect();
         assert_eq!(manually_constructed_round, Round::from_players(&players));
     }
@@ -149,9 +160,18 @@ mod test {
         let six_players: Vec<_> = (1..=6).collect();
         let seven_players: Vec<_> = (1..=7).collect();
         let eleven_players: Vec<_> = (1..=11).collect();
-        assert_eq!(Err(RoundError::NeedsStaggered(6usize)), Round::from_players(&six_players));
-        assert_eq!(Err(RoundError::NeedsStaggered(7usize)), Round::from_players(&seven_players));
-        assert_eq!(Err(RoundError::NeedsStaggered(11usize)), Round::from_players(&eleven_players));
+        assert_eq!(
+            Err(RoundError::NeedsStaggered(6usize)),
+            Round::from_players(&six_players)
+        );
+        assert_eq!(
+            Err(RoundError::NeedsStaggered(7usize)),
+            Round::from_players(&seven_players)
+        );
+        assert_eq!(
+            Err(RoundError::NeedsStaggered(11usize)),
+            Round::from_players(&eleven_players)
+        );
     }
 
     #[test]
